@@ -1,1 +1,30 @@
+name: Build GeoViet (iOS)
 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build GeoViet iOS mod
+        id: build
+        uses: geode-sdk/build-geode-mod@main
+        with:
+          target: iOS
+          combine: true
+
+      - name: Upload .geode
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeoViet-iOS
+          path: ${{ steps.build.outputs.build-output }}

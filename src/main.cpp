@@ -3,50 +3,103 @@
 
 using namespace geode::prelude;
 
-#include <fstream>
-#include <unordered_map>
-#include <nlohmann/json.hpp>
+#include <string>
+#include <matjson.hpp>
 
-std::unordered_map<std::string, std::string> g_translations;
+// ============================
+// Include built-in translation
+// ============================
 
-void loadTranslations() {
-    try {
-        auto path = Mod::get()->getConfigDir() / "vi.json";
+static const char* GEO_VI_JSON = R"JSON(
+#include "vi.json"
+)JSON";
 
-        std::ifstream file(path);
-        if (!file.is_open()) {
-            log::warn("GeoViet: vi.json not found");
-            return;
-        }
+// parsed json
+matjson::Value g_translations = matjson::Value::object();
 
-        nlohmann::json j;
-        file >> j;
+// ============================
+// Utility
+// ============================
 
-        for (auto& [key, value] : j.items()) {
-            g_translations[key] = value.get<std::string>();
-        }
-
-        log::info("GeoViet: Loaded {} translations", g_translations.size());
-    }
-    catch (...) {
-        log::error("GeoViet: Failed to load vi.json");
-    }
+static inline std::string trim_copy(std::string s) {
+    const char* ws = " \t\n\r\f\v";
+    auto start = s.find_first_not_of(ws);
+    if (start == std::string::npos) return "";
+    auto end = s.find_last_not_of(ws);
+    return s.substr(start, end - start + 1);
 }
 
-class $modify(GeoVietLabel, CCLabelBMFont) {
+// ============================
+// Load translation
+// ============================
 
+void loadTranslations() {
+    auto parsed = matjson::parse(GEO_VI_JSON);
+
+    if (!parsed) {
+        log::error("GeoViet: failed to parse built-in vi.json");
+        return;
+    }
+
+    g_translations = parsed.unwrap();
+
+    size_t count = 0;
+    if (g_translations.isObject()) {
+        count = g_translations.asObject()->size();
+    }
+
+    log::info("GeoViet: Loaded {} translations (built-in)", count);
+}
+
+// ============================
+// Translate function
+// ============================
+
+static std::string translate_string(const std::string& key) {
+    if (!g_translations.isObject()) return key;
+
+    // exact match
+    auto it = g_translations.get(key);
+    if (it && it->isString()) {
+        return it->asString().unwrapOr(key);
+    }
+
+    // trimmed match
+    auto trimmed = trim_copy(key);
+    if (trimmed != key) {
+        auto it2 = g_translations.get(trimmed);
+        if (it2 && it2->isString()) {
+            return it2->asString().unwrapOr(key);
+        }
+    }
+
+    return key;
+}
+
+// ============================
+// Hook Label
+// ============================
+
+class $modify(GeoVietLabel, CCLabelBMFont) {
     void setString(const char* text, bool needUpdateLabel = true) {
         std::string str = text ? text : "";
 
-        auto it = g_translations.find(str);
-        if (it != g_translations.end()) {
-            str = it->second;
+        if (!str.empty()) {
+            auto translated = translate_string(str);
+
+            if (translated != str) {
+                CCLabelBMFont::setString(translated.c_str(), needUpdateLabel);
+                return;
+            }
         }
 
         CCLabelBMFont::setString(str.c_str(), needUpdateLabel);
     }
-
 };
+
+// ============================
+// Init
+// ============================
 
 $execute {
     loadTranslations();

@@ -4,7 +4,7 @@ GeoViet is a This is an open-source mod it translates the Geometry Dash language
 
 ## Support
 
-you want to support the **GeoViet** mod, you can:
+if you want to support the **GeoViet** mod, you can:
 
 - ⭐ Subscribe to my YouTube channel:  
   [Hoangdinhgg](https://youtube.com/@HOANGDINHGG)

@@ -4,7 +4,7 @@ GeoViet is a Vietnamese translation mod for Geometry Dash built with the Geode m
 
 If you ever opened Geometry Dash and thought:
 
-« "Ủa cái này nghĩa là gì vậy?" »
+"Ủa cái này nghĩa là gì vậy?"
 
 Then GeoViet is here to help 😄
 This mod translates many in-game texts into Vietnamese, helping Vietnamese players understand the game more easily while still preserving the original Geometry Dash style that has become iconic to the game.

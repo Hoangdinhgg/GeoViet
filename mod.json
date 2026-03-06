@@ -1,22 +1,22 @@
 {
-	"geode": "5.3.0",
-	"gd": {
-		"win": ">=2.2072",
-		"android": ">=2.2072",
-		"mac": ">=2.2072",
-		"ios": ">=2.2072"
-	},
-	"id": "com.hoangdinhgg.geoviet",
-	"name": "GeoViet",
-	"version": "0.12.0",
-	"developer": "Hoangdinhgg",
-	"description": "translate Geometry Dash language to Vietnamese",
-	"dependencies": {
-		"geode.node-ids": ">=v1.20.0"
-	},
-	"resources": {
-      "files": [
-        "resources/vi.json"
-      ]
-    }
+  "geode": "5.3.0",
+  "gd": {
+    "win": ">=2.2074",
+    "android": ">=2.2074",
+    "mac": ">=2.2074",
+    "ios": ">=2.2074"
+  },
+  "id": "com.hoangdinhgg.geoviet",
+  "name": "GeoViet",
+  "version": "0.12.0",
+  "developer": "Hoangdinhgg",
+  "description": "translate Geometry Dash language to Vietnamese",
+  "dependencies": {
+    "geode.node-ids": ">=1.20.0"
+  },
+  "resources": {
+    "files": [
+      "resources/vi.json"
+    ]
+  }
 }

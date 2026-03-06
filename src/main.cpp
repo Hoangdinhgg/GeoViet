@@ -37,7 +37,6 @@ static bool starts_with(const std::string& s, const std::string& prefix) {
 
 void loadTranslations() {
     try {
-        // Get resource path inside the .geode package
         auto path = Mod::get()->getResourcesDir() / "vi.json";
 
         if (!std::filesystem::exists(path)) {
@@ -67,14 +66,14 @@ void loadTranslations() {
 
         g_translations = parsed.unwrap();
 
+        // Avoid calling asObject() — just confirm it's an object
         if (!g_translations.isObject()) {
             log::error("GeoViet: vi.json root is not an object");
             g_translations = matjson::Value::object();
             return;
         }
 
-        auto& obj = g_translations.asObject();
-        log::info("GeoViet: loaded {} translations", obj.size());
+        log::info("GeoViet: translations loaded (object present)");
     }
     catch (const std::exception& e) {
         log::error("GeoViet: exception loading vi.json: {}", e.what());
@@ -112,9 +111,7 @@ static std::string translate_string(const std::string& key) {
     }
 
     // Simple pattern rules (common in GD)
-    // Example: "Attempt 1" => "Lần thử 1"
     if (starts_with(key, "Attempt")) {
-        // keep the number suffix
         std::string rest = key.substr(7); // after "Attempt"
         rest = trim_copy(rest);
         auto resPrefix = g_translations.get("Attempt");
@@ -127,8 +124,6 @@ static std::string translate_string(const std::string& key) {
             }
         }
     }
-
-    // Another example: "Practice Mode" could map to "Chế độ Practice" etc via dictionary
 
     return key;
 }
